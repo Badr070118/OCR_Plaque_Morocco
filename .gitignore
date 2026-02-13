@@ -1,0 +1,8 @@
+MLPDR-main/.venv/
+MLPDR-main/__pycache__/
+MLPDR-main/tmp/
+MLPDR-main/received/
+MLPDR-main/weights/
+MLPDR-main/frontend/node_modules/
+MLPDR-main/frontend/dist/
+MLPDR-main/frontend/.vite/
