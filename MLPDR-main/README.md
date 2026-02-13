@@ -1,93 +1,101 @@
 # MLPDR
-### About
-Moroccan license plate detection &amp; recognition. Built with YOLOv3 and PyQt. + FLASK 
-### Setup
-Install [Python](https://www.python.org/downloads/) Use Python 3.8.
 
-Clone this repository, cd to its directory and run the following commands:
-```
-# Create and activate a new virtual environment
-$ python -m venv env
+Detection et reconnaissance de plaques marocaines avec YOLOv3.
 
-## Windows
-$ ./env/Scripts/activate
-## Linux
-$ source ./env/bin/activate
+Cette version du projet inclut:
+- interface desktop PyQt5
+- API Flask
+- frontend React
+- stack Docker (frontend + backend)
 
-# Install the project's requirements
-$ pip install -r ./requirements.txt
-```
+## Prerequis
 
-Before running the project, you will need the trained weights. Considering the size of the weights and that Git LFS has a monthly limit on bandwidth, you will have to download the latest [release](https://github.com/HamzaEzzRa/MLPDR/releases/tag/v1.0.0-beta) and copy the weights folder to the cloned project.
+- Python 3.11 recommande
+- Node.js 20+
+- Docker Desktop (optionnel)
+- Poids YOLO dans `./weights`
 
-```
-# Run the project
-$ python ./main.py
-$ python ./api.py # to run the API
-$ python ./client.py # client side code to send the picture 
-```
+## Lancement avec Docker
 
-### React Frontend
-You can use a web frontend without changing the detection/OCR logic.
-
-Start the Flask API:
-```
-$ python ./api.py
-```
-
-In another terminal, start the React app:
-```
-$ cd ./frontend
-$ npm install
-$ npm run dev
-```
-
-Open:
-```
-http://localhost:5173
-```
-
-The React app proxies API calls to `http://127.0.0.1:5000`.
-
-### Docker (API + React)
-You can run the web stack with Docker without changing detection/OCR logic.
-
-Requirements:
-```
-- Docker Desktop (or Docker Engine + Compose)
-- The local ./weights folder present in the project
-```
-
-Run:
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-Open:
-```
-http://localhost:5173
-```
+Acces:
+- frontend: `http://localhost:5173`
+- API: `http://localhost:5000`
 
-Services:
-```
-- frontend: http://localhost:5173
-- backend API: http://localhost:5000
-```
+Arret:
 
-Stop:
 ```bash
 docker compose down
 ```
 
-### Screenshots
-<p align="center">
-  <img src="https://i.imgur.com/f7evHhw.png" />  
-</p>
+## Lancement local
 
-<p align="center">
-  <img src="https://thumbs2.imgbox.com/d9/5f/uvjtaIeO_t.png" />
-  
-</p>
+### API Flask
 
-### Dataset
-The network has been trained on the Moroccan license plate dataset: [https://msda.um6p.ma/msda_datasets](https://msda.um6p.ma/msda_datasets).
+```bash
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+pip install --upgrade pip
+pip install Flask numpy opencv-python Pillow pytesseract arabic-reshaper python-bidi requests
+python api.py
+```
+
+### Frontend React
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### GUI Desktop
+
+```bash
+.venv\Scripts\activate
+pip install PyQt5
+python main.py
+```
+
+## Poids attendus
+
+- `./weights/detection/yolov3-detection_final.weights`
+- `./weights/detection/yolov3-detection.cfg`
+- `./weights/ocr/yolov3-ocr_final.weights`
+- `./weights/ocr/yolov3-ocr.cfg`
+
+Source des poids:
+- https://github.com/HamzaEzzRa/MLPDR/releases/tag/v1.0.0-beta
+
+## API
+
+Endpoint:
+- `POST /upload`
+
+Form-data:
+- `image` (obligatoire)
+- `ocr_mode` (`trained` ou `tesseract`, optionnel)
+
+Exemple:
+
+```bash
+curl -X POST "http://127.0.0.1:5000/upload" \
+  -F "image=@./test_images/20200617_185301b_contrast.jpg" \
+  -F "ocr_mode=trained"
+```
+
+## Troubleshooting rapide
+
+- `weights` manquants: verifier le dossier `./weights`.
+- Tesseract non trouve en local Windows: verifier `C:\Program Files\Tesseract-OCR\tesseract.exe`.
+- Port occupe (`5000`, `5173`): arreter le process ou changer le port.
+- Docker indisponible: lancer Docker Desktop.
+
+## Licence
+
+MIT.
